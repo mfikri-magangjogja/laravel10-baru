@@ -8,6 +8,10 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <form action="{{ route('kaprodi.mahasiswa.index') }}" method="GET" class="mb-4">
+                    <input type="text" name="search" placeholder="Cari berdasarkan nama..." class="border rounded-md px-2 py-1">
+                    <button type="submit" class="btn btn-primary">Cari</button>
+                </form>
                 <a href="{{ route('kaprodi.kelas.create') }}" class="btn btn-primary">Tambah</a>
                 <table class="table">
                     <thead>

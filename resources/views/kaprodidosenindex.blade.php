@@ -1,4 +1,3 @@
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -9,7 +8,14 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <!-- Formulir Pencarian -->
+                <form action="{{ route('kaprodi.dosen.index') }}" method="GET" class="mb-4">
+                    <input type="text" name="search" placeholder="Cari berdasarkan nama..." class="border rounded-md px-2 py-1">
+                    <button type="submit" class="btn btn-primary">Cari</button>
+                </form>
+
                 <a href="{{ route('kaprodi.dosen.create') }}" class="btn btn-primary">Tambah</a>
+                
                 <table class="table">
                     <thead>
                         <tr>
@@ -36,8 +42,6 @@
                             <td>{{ $d->nama }}</td>
                             <td>
                                 <a href="{{ route('kaprodi.dosen.edit', $d->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                {{-- <a href="{{ route('kaprodi.dosen.destroy', $d->id) }}" class="btn btn-danger btn-sm">Hapus</a> --}}
-            
                                 <form action="{{ route('kaprodi.dosen.destroy', $d->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
@@ -52,5 +56,3 @@
         </div>
     </div>
 </x-app-layout>
-
-

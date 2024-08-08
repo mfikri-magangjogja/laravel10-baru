@@ -20,12 +20,27 @@ class KaprodiController extends Controller
         return view('profile/infoakun', compact('kaprodi'));
     }
 
-    
+
     public function indexdosen()
     {
         $dosen = dosen::get();
         return view('kaprodidosenindex', compact('dosen'));
     }
+    // Di KaprodiController.php
+
+    public function cariNamaDosen(Request $request)
+    {
+        $query = Dosen::query();
+
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('nama', 'like', '%' . $request->search . '%');
+        }
+
+        $dosen = $query->get();
+
+        return view('kaprodidosenindex', compact('dosen'));
+    }
+
 
 
     public function createDosen()
@@ -80,9 +95,23 @@ class KaprodiController extends Controller
     }
 
 
+
+
     public function indexKelas()
     {
         $kelas = Kelas::all();
+        return view('kaprodikelasindex', compact('kelas'));
+    }
+    public function cariNamaKelas(Request $request)
+    {
+        $query = Kelas::query();
+
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('nama', 'like', '%' . $request->search . '%');
+        }
+
+        $kelas = $query->get();
+
         return view('kaprodikelasindex', compact('kelas'));
     }
 
@@ -161,32 +190,32 @@ class KaprodiController extends Controller
     }
 
     public function plotDosen(Request $request)
-{
-    $request->validate([
-        'dosen_id' => 'required|exists:t_dosen,id',
-        'kelas_id' => 'required|exists:t_kelas,id',
-    ]);
+    {
+        $request->validate([
+            'dosen_id' => 'required|exists:t_dosen,id',
+            'kelas_id' => 'required|exists:t_kelas,id',
+        ]);
 
-    // Temukan dosen berdasarkan ID
-    $dosen = Dosen::findOrFail($request->input('dosen_id'));
+        // Temukan dosen berdasarkan ID
+        $dosen = Dosen::findOrFail($request->input('dosen_id'));
 
-    // Temukan kelas yang dituju
-    $kelas = Kelas::findOrFail($request->input('kelas_id'));
+        // Temukan kelas yang dituju
+        $kelas = Kelas::findOrFail($request->input('kelas_id'));
 
-    // Periksa apakah kelas sudah memiliki dosen
-    $kelasDenganDosen = Dosen::where('kelas_id', $kelas->id)->first();
+        // Periksa apakah kelas sudah memiliki dosen
+        $kelasDenganDosen = Dosen::where('kelas_id', $kelas->id)->first();
 
-    if ($kelasDenganDosen) {
-        return redirect()->route('kaprodi.plot.index')->with('error', 'Kelas ini sudah memiliki dosen.');
+        if ($kelasDenganDosen) {
+            return redirect()->route('kaprodi.plot.index')->with('error', 'Kelas ini sudah memiliki dosen.');
+        }
+
+        // Perbarui kelas dosen
+        $dosen->update([
+            'kelas_id' => $kelas->id
+        ]);
+
+        return redirect()->route('kaprodi.plot.index')->with('success', 'Dosen berhasil dipindahkan ke kelas.');
     }
-
-    // Perbarui kelas dosen
-    $dosen->update([
-        'kelas_id' => $kelas->id
-    ]);
-
-    return redirect()->route('kaprodi.plot.index')->with('success', 'Dosen berhasil dipindahkan ke kelas.');
-}
 
 
     public function destroyKelasDosen($id)
@@ -209,7 +238,7 @@ class KaprodiController extends Controller
         $kelas = Kelas::findOrFail($id);
 
         // Ambil semua dosen
-        $mahasiswa = Mahasiswa::whereNull('kelas_id')->get();;
+        $mahasiswa = Mahasiswa::whereNull('kelas_id')->get();
 
         return view('kaprodiplotmahasiswa', compact('kelas', 'mahasiswa'));
     }
@@ -220,21 +249,21 @@ class KaprodiController extends Controller
             'mahasiswa_id' => 'required|exists:t_mahasiswa,id',
             'kelas_id' => 'required|exists:t_kelas,id',
         ]);
-    
+
         // Temukan mahasiswa berdasarkan ID
         $mahasiswa = Mahasiswa::findOrFail($request->input('mahasiswa_id'));
-    
+
         // Temukan kelas yang dituju
         $kelas = Kelas::findOrFail($request->input('kelas_id'));
-    
+
         // Hitung jumlah mahasiswa di kelas yang dituju
         $jumlahMahasiswaDiKelas = Mahasiswa::where('kelas_id', $kelas->id)->count();
-    
+
         // Periksa apakah kapasitas kelas mencukupi
         if ($jumlahMahasiswaDiKelas >= $kelas->kapasitas) {
             return redirect()->route('kaprodi.plot.index')->with('error', 'Kelas ini sudah penuh.');
         }
-    
+
         // Jika mahasiswa sebelumnya ada di kelas lain, kurangi jumlah mahasiswa dari kelas lama
         if ($mahasiswa->kelas_id) {
             $kelasLama = Kelas::find($mahasiswa->kelas_id);
@@ -246,15 +275,14 @@ class KaprodiController extends Controller
                 }
             }
         }
-    
+
         // Perbarui kelas mahasiswa
         $mahasiswa->update([
             'kelas_id' => $kelas->id
         ]);
-    
+
         return redirect()->route('kaprodi.plot.index', $kelas->id)->with('success', 'Mahasiswa berhasil diperbarui.');
     }
-    
 
 
     public function destroyKelasMahasiswa($id)
@@ -264,5 +292,78 @@ class KaprodiController extends Controller
         $mahasiswa->update(['kelas_id' => null]);
 
         return redirect()->route('kaprodi.plot.index')->with('success', 'Kelas dosen berhasil dihapus.');
+    }
+    public function plotDosenCoba()
+    {
+        $kelas = kelas::all();
+        $dosen = Dosen::whereNull('kelas_id')->get();
+        return view('kaprodiplotdosen', compact('dosen', 'kelas'));
+    }
+
+
+    public function updateKelasDosen(Request $request)
+    {
+        $request->validate([
+            'dosen_ids' => 'required|array',
+            'dosen_ids.*' => 'exists:t_dosen,id',
+            'id_kelas' => 'required|exists:t_kelas,id',
+        ]);
+
+        $idKelas = $request->input('id_kelas');
+        $dosenIds = $request->input('dosen_ids');
+
+        // Cek jika kelas yang dipilih sudah memiliki dosen
+        $kelasDenganDosen = Dosen::where('kelas_id', $idKelas)->first();
+
+        if ($kelasDenganDosen) {
+            // Jika kelas sudah memiliki dosen, batalkan pembaruan
+            return redirect()->route('kaprodi.plot.index')->withErrors([
+                'id_kelas' => 'Kelas yang dipilih sudah memiliki dosen.'
+            ]);
+        }
+
+        // Update kelas dosen
+        Dosen::whereIn('id', $dosenIds)->update(['kelas_id' => $idKelas]);
+
+        return redirect()->route('kaprodi.plot.index')->with('success', 'Kelas dosen berhasil diperbarui.');
+    }
+
+    public function plotMahasiswaCoba()
+    {
+        $kelas = kelas::all();
+        $mahasiswa = Mahasiswa::whereNull('kelas_id')->get();;
+        return view('kaprodiplotmahasiswa', compact('kelas', 'mahasiswa'));
+    }
+    // Di KaprodiController.php
+
+    public function updateKelasMahasiswa(Request $request)
+    {
+        $request->validate([
+            'mahasiswa_ids' => 'required|array',
+            'mahasiswa_ids.*' => 'exists:t_mahasiswa,id',
+            'id_kelas' => 'required|exists:t_kelas,id',
+        ]);
+
+        $idKelas = $request->input('id_kelas');
+        $mahasiswaIds = $request->input('mahasiswa_ids');
+
+        // Hitung jumlah mahasiswa yang sudah terdaftar di kelas yang dipilih
+        $kelas = Kelas::findOrFail($idKelas);
+        $jumlahMahasiswaDiKelas = Mahasiswa::where('kelas_id', $idKelas)->count();
+
+        // Hitung jumlah mahasiswa yang akan ditambahkan
+        $jumlahMahasiswaAkanDiperbarui = count($mahasiswaIds);
+
+        // Periksa jika jumlah mahasiswa yang akan ditambahkan melebihi kapasitas kelas
+        if (($jumlahMahasiswaDiKelas + $jumlahMahasiswaAkanDiperbarui) > $kelas->kapasitas) {
+            return redirect()->route('kaprodi.plot.index')->withErrors([
+                'id_kelas' => 'Kapasitas kelas tidak mencukupi untuk jumlah mahasiswa yang dipilih.'
+            ]);
+        }
+
+        // Perbarui kelas mahasiswa
+        Mahasiswa::whereIn('id', $mahasiswaIds)->update(['kelas_id' => $idKelas]);
+
+        return redirect()->route('kaprodi.plot.index')->with('success', 'Kelas mahasiswa berhasil diperbarui.');
     }
 }

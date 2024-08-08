@@ -42,6 +42,10 @@ Route::prefix('kaprodi/dosen')->name('kaprodi.dosen.')->middleware('auth')->grou
     Route::delete('/{dosen_id}', [KaprodiController::class, 'destroyDosen'])->name('destroy')->middleware('useraccess:kaprodi');
 })->middleware('useraccess:kaprodi');
 
+Route::get('/kaprodi/dosen', [KaprodiController::class, 'cariNamaDosen'])->name('kaprodi.dosen.index')->middleware('useraccess:kaprodi');
+Route::get('/kaprodi/mahasiswa', [KaprodiController::class, 'cariNamaKelas'])->name('kaprodi.mahasiswa.index')->middleware('useraccess:kaprodi');
+
+
 // Rute untuk kaprodi mengelola kelas
 Route::prefix('kaprodi/kelas')->name('kaprodi.kelas.')->middleware('auth')->group(function () {
     Route::get('/', [KaprodiController::class, 'indexKelas'])->name('index')->middleware('useraccess:kaprodi');
@@ -54,11 +58,11 @@ Route::prefix('kaprodi/kelas')->name('kaprodi.kelas.')->middleware('auth')->grou
 
 Route::middleware('useraccess:kaprodi')->group(function () {
     Route::get('/kaprodi/plot/index', [KaprodiController::class, 'indexPlot'])->name('kaprodi.plot.index')->middleware('useraccess:kaprodi');
-    Route::get('/plot-dosen/{id}', [KaprodiController::class, 'plotDosenForm'])->name('kaprodi.plot.dosen')->middleware('useraccess:kaprodi');
-    Route::post('/plot-dosen/save', [KaprodiController::class, 'plotDosen'])->name('kaprodi.plot.save')->middleware('useraccess:kaprodi');
+    Route::get('/kaprodi/plot/dosen/coba', [KaprodiController::class, 'plotDosenCoba'])->name('kaprodi.plot.dosen');
+    Route::post('/kaprodi/dosen/update-kelas', [KaprodiController::class, 'updateKelasDosen'])->name('kaprodi.dosen.update.kelas');
     Route::delete('/dosen/{id}', [KaprodiController::class, 'destroyKelasDosen'])->name('kaprodi.dosen.destroy')->middleware('useraccess:kaprodi');
-    Route::get('/plot-mahasiswa/{id}', [KaprodiController::class, 'plotMahasiswaForm'])->name('kaprodi.plot.mahasiswa')->middleware('useraccess:kaprodi');
-    Route::post('/plot-mahasiswa/save', [KaprodiController::class, 'plotMahasiswa'])->name('kaprodi.plot.save.mahasiswa')->middleware('useraccess:kaprodi');
+    Route::get('/kaprodi/plot/mahasiswa/coba', [KaprodiController::class, 'plotMahasiswaCoba'])->name('kaprodi.plot.mahasiswa');
+    Route::post('/kaprodi/mahasiswa/update-kelas', [KaprodiController::class, 'updateKelasMahasiswa'])->name('kaprodi.mahasiswa.update.kelas');
     Route::delete('/mahasiswa/{id}', [KaprodiController::class, 'destroyKelasMahasiswa'])->name('kaprodi.mahasiswa.destroy')->middleware('useraccess:kaprodi');
 });
 

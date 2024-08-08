@@ -4,14 +4,24 @@
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <a href="{{ route('kaprodi.plot.dosen') }}" class="btn btn-warning btn-sm">Plot Dosen</a>
+                    <a href="{{ route('kaprodi.plot.mahasiswa') }}" class="btn btn-warning btn-sm">Plot Mahasiswa</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    
     @foreach ($kelas as $k)
         <div class="py-12">
+            
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg text-white">
-                    <p class="text-gray-600">Kelas: {{ $k->nama }}</p>
-                    <a href="{{ route('kaprodi.plot.dosen', $k->id) }}" class="btn btn-warning btn-sm">Tambah</a>
-
+                    <p class="text-white">Kelas: {{ $k->nama }}</p>
                     <table class="table">
                         <thead>
                             <tr>
@@ -54,8 +64,6 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg  text-white">
-                    <a href="{{ route('kaprodi.plot.mahasiswa', $k->id) }}" class="btn btn-warning btn-sm">Tambah</a>
-
                     <table class="table">
                         <thead>
                             <tr>
