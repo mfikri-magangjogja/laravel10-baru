@@ -11,12 +11,12 @@
                 <!-- Formulir Pencarian -->
                 <form action="{{ route('kaprodi.dosen.index') }}" method="GET" class="mb-4">
                     <input type="text" name="search" placeholder="Cari berdasarkan nama..." class="border rounded-md px-2 py-1">
-                    <button type="submit" class="btn btn-primary">Cari</button>
+                    <button type="submit" class="btn btn-primary text-white">Cari</button>
                 </form>
 
-                <a href="{{ route('kaprodi.dosen.create') }}" class="btn btn-primary">Tambah</a>
+                <a href="{{ route('kaprodi.dosen.create') }}" class="btn btn-primary text-white">Tambah</a>
                 
-                <table class="table">
+                <table class="table text-white">
                     <thead>
                         <tr>
                             <th scope="col">No</th>

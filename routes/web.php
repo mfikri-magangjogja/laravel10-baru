@@ -32,7 +32,7 @@ Route::get('/info-akun/{id}', [ProfileController::class, 'info'])->name('kaprodi
 
 // Rute untuk kaprodi mengelola dosen
 
-Route::get('/kaprodi', [KaprodiController::class, 'index'])->name('kaprodi.index')->middleware('useraccess:kaprodi');
+
 Route::prefix('kaprodi/dosen')->name('kaprodi.dosen.')->middleware('auth')->group(function () {
     Route::get('/', [KaprodiController::class, 'indexDosen'])->name('index')->middleware('useraccess:kaprodi');
     Route::get('/create', [KaprodiController::class, 'createDosen'])->name('create')->middleware('useraccess:kaprodi');

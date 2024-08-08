@@ -10,10 +10,10 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <form action="{{ route('kaprodi.mahasiswa.index') }}" method="GET" class="mb-4">
                     <input type="text" name="search" placeholder="Cari berdasarkan nama..." class="border rounded-md px-2 py-1">
-                    <button type="submit" class="btn btn-primary">Cari</button>
+                    <button type="submit" class="btn btn-primary text-white">Cari</button>
                 </form>
-                <a href="{{ route('kaprodi.kelas.create') }}" class="btn btn-primary">Tambah</a>
-                <table class="table">
+                <a href="{{ route('kaprodi.kelas.create') }}" class="btn btn-primary text-white">Tambah</a>
+                <table class="table text-white">
                     <thead>
                         <tr>
                             <th scope="col">No</th>
