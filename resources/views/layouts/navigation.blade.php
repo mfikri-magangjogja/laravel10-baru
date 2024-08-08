@@ -15,8 +15,8 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    {{-- @if (auth()->check())
-                        @if (auth()->user()->role == 'kaprodi') --}}
+                    @if (auth()->check())
+                        @if (auth()->user()->role == 'kaprodi')
                             <x-nav-link :href="route('kaprodi.dosen.index')" :active="request()->routeIs('kaprodi.dosen.index')">
                                 {{ __('Dosen') }}
                             </x-nav-link>
@@ -26,9 +26,9 @@
                             <x-nav-link :href="route('kaprodi.plot.index')" :active="request()->routeIs('kaprodi.Plot.index')">
                                 {{ __('Plotting') }}
                             </x-nav-link>
-                        {{-- @elseif (auth()->user()->role == 'dosen')
-                        @endif --}}
-                    {{-- @endif --}}
+                        @elseif (auth()->user()->role == 'dosen')
+                        @endif
+                    @endif
                 </div>|
             </div>
 
@@ -52,7 +52,7 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('kaprodi.info',['id' => auth()->user()->id])">
+                        <x-dropdown-link :href="route('kaprodi.info', ['id' => auth()->user()->id])">
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
